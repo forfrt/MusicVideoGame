@@ -4,8 +4,10 @@ using System.Collections;
 public class GameManager : MonoBehaviour {
 	//Controller2D脚本的参量
 	public Controller2D controller2D;
-	//角色生命值
-	public Texture playersHealthTexture;
+
+    public Rigidbody blockPrefab;
+    //角色生命值
+    public Texture playersHealthTexture;
 	//控制上面那个Teture的屏幕所在位置
 	public float screenPositionX;
 	public float screenPositionY;
@@ -26,10 +28,70 @@ public class GameManager : MonoBehaviour {
 
 	//这个地方定义了私有变量player作为一个GameObject，然后用下面的FindGameObjectWithTag获取它，这样的话，在下面的伤害判断时，就可以用player.renderer了。
 	void Start(){
-		player = GameObject.FindGameObjectWithTag("Player");
-	}
+        player = GameObject.FindGameObjectWithTag("Player");
 
-	void Update(){
+        //System.Random random;
+        int[] blockX = new int[5];
+        int[] blockY = new int[5];
+
+        int x;
+        int y;
+
+        for (int i = 0; i < 5; i++){
+            
+            x = Random.Range(0, 19);
+            y = Random.Range(0, 19);
+
+            
+            while (NotInPreset(x, y)) {
+                x = Random.Range(0, 19);
+                y = Random.Range(0, 19);
+            }
+            
+            
+            blockX[i] = x;
+            blockY[i] = y;
+            
+        }
+
+
+
+        
+        for (int i = 0; i < 5; i++)
+        {
+            Rigidbody bPrefab = Instantiate(blockPrefab, transform.position, Quaternion.identity) as Rigidbody;
+            print("Generated X & Y");
+            print(blockX[i]);
+            print(blockY[i]);
+
+            bPrefab.transform.position = new Vector3(-8.0f * blockX[i] + 76, -4.5f * blockY[i] + 42.75f, -4f);
+            /*
+            bPrefab.transform.position.x =-8.0f*blockX[i]+76;
+            bPrefab.transform.position.y = -4.5f*blockY[i]+42.75f;
+            */
+        }
+        
+
+
+    }
+
+    
+    bool NotInPreset(int x, int y) {
+        if (x == 0 & y == 0)
+        {
+            return true;
+        }
+        if (x == 19 & y == 19)
+        {
+            return true;
+        }
+
+        return false;
+    }
+    
+
+
+    void Update(){
 		if (curEXP >= maxEXP) {
 			LevelUp();		
 		}
